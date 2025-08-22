@@ -1,0 +1,9 @@
+0 TextAsset Base  1 string m_Name = "sample1"  1 string m_Script = "﻿{\"Data\":[
+{\"ID\":\"text_1\",\"Chinese\":\"\",\"English\":\"Los tubos (ES)<T>debajo de la malla (ES)</T> no están tan juntos; podría caber entre ellos. (ES)\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_2\",\"Chinese\":\"\",\"English\":\"<A>{i}... Sonido... de... cadenas... (ES){/i}</A>\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_3\",\"Chinese\":\"\",\"English\":\"Mejora el armario de tu celda para aumentar el número de compartimentos a (ES){p1} bla bla bla. (ES)\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_4\",\"Chinese\":\"\",\"English\":\"{sigh1}\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_5\",\"Chinese\":\"\",\"English\":\"Este es un texto simple. (ES)\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_6\",\"Chinese\":\"\",\"English\":\"Texto con (ES)\"comillas (ES)\" dentro. (ES)\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
+{\"ID\":\"text_7\",\"Chinese\":\"\",\"English\":\"Texto inicial (ES){p1} texto intermedio (ES){p2} texto final. (ES)\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"}
+]}"

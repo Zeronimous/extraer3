@@ -1,0 +1,88 @@
+[
+  {
+    "original_id": "text_1",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      {
+        "ref": "text_1_1"
+      },
+      "<T>",
+      {
+        "ref": "text_1_2"
+      },
+      "</T>",
+      {
+        "ref": "text_1_3"
+      }
+    ]
+  },
+  {
+    "original_id": "text_2",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      "<A>",
+      "{i}",
+      {
+        "ref": "text_2_1"
+      },
+      "{/i}",
+      "</A>"
+    ]
+  },
+  {
+    "original_id": "text_3",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      {
+        "ref": "text_3_1"
+      },
+      "{p1}",
+      {
+        "ref": "text_3_2"
+      }
+    ]
+  },
+  {
+    "original_id": "text_5",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      {
+        "ref": "text_5_1"
+      }
+    ]
+  },
+  {
+    "original_id": "text_6",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      {
+        "ref": "text_6_1"
+      },
+      "\"",
+      {
+        "ref": "text_6_2"
+      },
+      "\"",
+      {
+        "ref": "text_6_3"
+      }
+    ]
+  },
+  {
+    "original_id": "text_7",
+    "file_path": "ingles/sample1.txt",
+    "structure": [
+      {
+        "ref": "text_7_1"
+      },
+      "{p1}",
+      {
+        "ref": "text_7_2"
+      },
+      "{p2}",
+      {
+        "ref": "text_7_3"
+      }
+    ]
+  }
+]
