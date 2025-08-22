@@ -104,6 +104,10 @@ def inject_translations_json():
         json_string_escaped = script_match.group(2)
         json_string = json_string_escaped.replace('\\"', '"')
 
+        # Eliminar el carácter BOM literal si existe al inicio del string
+        if json_string.startswith('\\ufeff'):
+            json_string = json_string[len('\\ufeff'):]
+
         try:
             data = json.loads(json_string)
         except json.JSONDecodeError as e:
@@ -117,8 +121,6 @@ def inject_translations_json():
 
         new_json_string = json.dumps(data, ensure_ascii=False)
 
-        # El string de json.dumps ya está escapado. Solo necesitamos escapar las comillas
-        # para que sea un literal de string válido dentro de m_Script.
         final_escaped_string = new_json_string.replace('"', '\\"')
 
         modified_line3 = SCRIPT_CONTENT_PATTERN.sub(
