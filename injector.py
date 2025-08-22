@@ -102,11 +102,14 @@ def inject_translations_json():
             continue
 
         json_string_escaped = script_match.group(2)
-        json_string = json_string_escaped.replace('\\"', '"')
+        json_string_with_garbage = json_string_escaped.replace('\\"', '"')
 
-        # Eliminar el carácter BOM literal si existe al inicio del string
-        if json_string.startswith('\\ufeff'):
-            json_string = json_string[len('\\ufeff'):]
+        first_brace_pos = json_string_with_garbage.find('{')
+        if first_brace_pos == -1:
+            print(f"  [ERROR] No se encontró un JSON de inicio ('{{') en la tercera línea de '{file_path}'.")
+            continue
+
+        json_string = json_string_with_garbage[first_brace_pos:]
 
         try:
             data = json.loads(json_string)
@@ -120,7 +123,6 @@ def inject_translations_json():
                 item["English"] = new_english_texts[item_id]
 
         new_json_string = json.dumps(data, ensure_ascii=False)
-
         final_escaped_string = new_json_string.replace('"', '\\"')
 
         modified_line3 = SCRIPT_CONTENT_PATTERN.sub(
