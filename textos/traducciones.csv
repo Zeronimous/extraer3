@@ -1,14 +1,5 @@
 ID,Texto
-text_1_1,Los tubos (ES)
-text_1_2,debajo de la malla (ES)
-text_1_3, no están tan juntos; podría caber entre ellos. (ES)
-text_2_1,... Sonido... de... cadenas... (ES)
-text_3_1,Mejora el armario de tu celda para aumentar el número de compartimentos a (ES)
-text_3_2, bla bla bla. (ES)
-text_5_1,Este es un texto simple. (ES)
-text_6_1,Texto con (ES)
-text_6_2,comillas (ES)
-text_6_3, dentro. (ES)
-text_7_1,Texto inicial (ES)
-text_7_2, texto intermedio (ES)
-text_7_3, texto final. (ES)
+achievements_des_1_1,"(ES) Hehe, you'll regret your foolishness..."
+achievements_des_2_1,(ES) A simple line without special chars.
+achievements_des_3_1,"(ES) A line with a
+newline character."
