@@ -102,7 +102,6 @@ def process_text(original_id, text, file_path):
 
 def extract_from_files():
     if not os.path.exists(INPUT_DIR):
-        print(f"ADVERTENCIA: El directorio '{INPUT_DIR}' no existe. Se creará uno.")
         os.makedirs(INPUT_DIR)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)

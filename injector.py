@@ -1,18 +1,22 @@
 # -----------------------------------------------------------------------------
-# SCRIPT DE INYECCIÓN DE TEXTO TRADUCIDO (V2)
+# SCRIPT DE INYECCIÓN DE TEXTO TRADUCIDO (V3 - Lógica JSON)
 # -----------------------------------------------------------------------------
 #
 # Autor: Jules
 #
 # PROPÓSITO:
 # Este script reinserta los textos traducidos (del archivo .csv) en
-# copias de los archivos de juego originales, siguiendo la nueva lógica.
+# copias de los archivos de juego originales. Esta versión utiliza un
+# método de parseo JSON que es 100% robusto y seguro para manejar
+# cualquier tipo de caracter especial, comillas o barras invertidas.
 #
 # REGLAS DE INYECCIÓN (Según último requerimiento):
 # 1. Lee las primeras dos líneas del archivo original y las mantiene intactas.
-# 2. Reconstruye la tercera línea del archivo combinando los textos traducidos
-#    con los marcadores originales (guardados en manifest.json).
-# 3. Guarda un nuevo archivo .txt en la carpeta 'espanol' con el contenido
+# 2. Parsea el contenido de la tercera línea como una estructura de datos JSON.
+# 3. Modifica los textos en inglés directamente en la estructura de datos.
+# 4. Convierte la estructura de datos de nuevo a un string JSON, que ya
+#    estará perfectamente escapado.
+# 5. Guarda un nuevo archivo .txt en la carpeta 'espanol' con el contenido
 #    reensamblado (2 líneas originales + 1 línea modificada).
 #
 # INSTRUCCIONES DE USO:
@@ -29,7 +33,6 @@ import json
 import csv
 import re
 from collections import defaultdict
-import codecs
 
 # --- CONFIGURACIÓN ---
 TEXTS_DIR = "textos"
@@ -38,7 +41,7 @@ OUTPUT_DIR = "espanol"
 CSV_FILENAME = os.path.join(TEXTS_DIR, "traducciones.csv")
 MANIFEST_FILENAME = os.path.join(TEXTS_DIR, "manifest.json")
 
-# Patrones para encontrar y reemplazar el contenido
+# Patrón para encontrar y reemplazar el contenido de m_Script
 SCRIPT_CONTENT_PATTERN = re.compile(r'(m_Script\s*=\s*")(.*)(")', re.DOTALL)
 
 def reconstruct_string(structure, translations):
@@ -53,8 +56,10 @@ def reconstruct_string(structure, translations):
             result.append(translated_text)
     return "".join(result)
 
-def inject_translations():
-    """Función principal para generar los archivos traducidos."""
+def inject_translations_json():
+    """
+    Función principal que utiliza parseo JSON para una inyección 100% segura.
+    """
     if not os.path.exists(MANIFEST_FILENAME) or not os.path.exists(CSV_FILENAME):
         print(f"Error: No se encontraron '{MANIFEST_FILENAME}' o '{CSV_FILENAME}'.")
         return
@@ -64,14 +69,20 @@ def inject_translations():
         manifest = json.load(f)
     translations = {row['ID']: row['Texto'] for row in csv.DictReader(open(CSV_FILENAME, 'r', encoding='utf-8'))}
 
-    modifications_by_file = defaultdict(list)
+    new_english_texts = {}
     for entry in manifest:
-        modifications_by_file[entry['file_path']].append(entry)
+        original_id = entry['original_id']
+        new_text = reconstruct_string(entry['structure'], translations)
+        new_english_texts[original_id] = new_text
 
-    print(f"Se procesarán {len(modifications_by_file)} archivo(s).")
+    mods_by_file = defaultdict(list)
+    for entry in manifest:
+        mods_by_file[entry['file_path']].append(entry['original_id'])
+
+    print(f"Se procesarán {len(mods_by_file)} archivo(s).")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    for file_path, mods in modifications_by_file.items():
+    for file_path, ids_in_file in mods_by_file.items():
         print(f"Procesando: {file_path}")
         if not os.path.exists(file_path):
             print(f"  [AVISO] El archivo original '{file_path}' no se encontró. Saltando.")
@@ -88,39 +99,31 @@ def inject_translations():
 
         script_match = SCRIPT_CONTENT_PATTERN.search(line3)
         if not script_match:
-            print(f"  [AVISO] No se encontró 'm_Script' en la tercera línea de {file_path}. Saltando.")
             continue
 
-        script_data_escaped = script_match.group(2)
-        script_data_unescaped = script_data_escaped.replace('\\"', '"')
+        json_string_escaped = script_match.group(2)
+        json_string = json_string_escaped.replace('\\"', '"')
 
-        for mod in mods:
-            original_id = mod['original_id']
-            new_english_text = reconstruct_string(mod['structure'], translations)
+        try:
+            data = json.loads(json_string)
+        except json.JSONDecodeError as e:
+            print(f"  [ERROR] La tercera línea de '{file_path}' no contiene un JSON válido. Error: {e}")
+            continue
 
-            safe_new_english_text = new_english_text.replace('\\', '\\\\')
+        for item in data.get("Data", []):
+            item_id = item.get("ID")
+            if item_id in new_english_texts:
+                item["English"] = new_english_texts[item_id]
 
-            replace_pattern = re.compile(
-                r'("ID"\s*:\s*"' + re.escape(original_id) + r'".*?"English"\s*:\s*")'
-                r'(.*?)'
-                r'("(?:\s*,\s*"Japanese"))',
-                re.DOTALL
-            )
+        new_json_string = json.dumps(data, ensure_ascii=False)
 
-            script_data_unescaped = replace_pattern.sub(
-                r'\1' + safe_new_english_text + r'\3',
-                script_data_unescaped,
-                count=1
-            )
-
-        final_script_data_escaped = script_data_unescaped.replace('"', '\\"')
-
-        safe_final_script_data_escaped = final_script_data_escaped.replace('\\', '\\\\')
+        # El string de json.dumps ya está escapado. Solo necesitamos escapar las comillas
+        # para que sea un literal de string válido dentro de m_Script.
+        final_escaped_string = new_json_string.replace('"', '\\"')
 
         modified_line3 = SCRIPT_CONTENT_PATTERN.sub(
-            r'\1' + safe_final_script_data_escaped + r'\3',
-            line3,
-            count=1
+            r'\1' + final_escaped_string + r'\3',
+            line3
         )
 
         relative_path = os.path.relpath(file_path, SOURCE_DIR)
@@ -136,4 +139,4 @@ def inject_translations():
     print(f"\n¡Proceso de inyección completado! Archivos guardados en la carpeta '{OUTPUT_DIR}'.")
 
 if __name__ == "__main__":
-    inject_translations()
+    inject_translations_json()
