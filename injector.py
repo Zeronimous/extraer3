@@ -109,7 +109,9 @@ def inject_translations_json():
             print(f"  [ERROR] No se encontró un JSON de inicio ('{{') en la tercera línea de '{file_path}'.")
             continue
 
-        json_string = json_string_with_garbage[first_brace_pos:]
+        # Aislar el bloque JSON buscando el primer y último corchete
+        last_brace_pos = json_string_with_garbage.rfind('}')
+        json_string = json_string_with_garbage[first_brace_pos : last_brace_pos + 1]
 
         try:
             data = json.loads(json_string)
