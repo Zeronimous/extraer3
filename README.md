@@ -1,8 +1,8 @@
-# Herramientas de Traducción de Textos de Juego (V3 - JSON)
+# Herramientas de Traducción de Textos de Juego (V4 - Definitiva)
 
-Este proyecto contiene dos scripts de Python (`extractor.py` e `injector.py`) diseñados para facilitar la traducción de textos de archivos de un juego. Esta es la versión final y más robusta.
+Este proyecto contiene dos scripts de Python (`extractor.py` e `injector.py`) diseñados para facilitar la traducción de textos de archivos de un juego. Esta es la versión final y más robusta, diseñada para manejar los casos más complejos.
 
-## Lógica de Funcionamiento (V3)
+## Lógica de Funcionamiento (V4)
 
 Esta versión de los scripts funciona con las siguientes reglas:
 
@@ -10,7 +10,10 @@ Esta versión de los scripts funciona con las siguientes reglas:
 2.  **Reglas de Marcadores**: El texto se divide según dos tipos de marcadores:
     -   **Marcadores Clásicos**: Como `<T>`, `</T>`, `{p1}`, etc.
     -   **Marcador de Barra Invertida**: Una barra invertida (`\`) seguida de los dos caracteres siguientes (ej: `\ab`) se trata como un delimitador no traducible.
-3.  **Inyección con Lógica JSON**: El script de inyección (`injector.py`) ahora parsea el texto del juego como una estructura de datos JSON. Esto le permite modificar los textos de forma 100% segura y precisa, eliminando por completo los errores de barras invertidas y comillas extra.
+3.  **Inyección con Lógica JSON Definitiva**: El script de inyección (`injector.py`) ahora utiliza un método de dos pasos para garantizar la máxima compatibilidad:
+    -   Primero, **aísla** el bloque de datos JSON buscando el primer `{` y el último `}` en la línea, eliminando cualquier dato basura al principio o al final.
+    -   Segundo, **desescapa** este bloque de forma robusta usando la librería `codecs` antes de parsearlo como JSON.
+    -   Este proceso asegura que el script funcione incluso con archivos que tengan un formato o codificación inesperados.
 
 ## Estructura de Carpetas
 
@@ -57,4 +60,4 @@ Sigue estos pasos en orden:
     ```bash
     python injector.py
     ```
-2.  ¡Listo! Encontrarás los archivos completamente traducidos en la carpeta `espanol/`. Cada archivo contendrá las dos primeras líneas del original intactas y la tercera línea modificada con tus traducciones, perfectamente formateada.
+2.  ¡Listo! Encontrarás los archivos completamente traducidos en la carpeta `espanol/`.

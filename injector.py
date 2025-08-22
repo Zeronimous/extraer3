@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# SCRIPT DE INYECCIÓN DE TEXTO TRADUCIDO (V3 - Lógica JSON)
+# SCRIPT DE INYECCIÓN DE TEXTO TRADUCIDO (V4 - Lógica JSON Definitiva)
 # -----------------------------------------------------------------------------
 #
 # Autor: Jules
@@ -12,7 +12,8 @@
 #
 # REGLAS DE INYECCIÓN (Según último requerimiento):
 # 1. Lee las primeras dos líneas del archivo original y las mantiene intactas.
-# 2. Parsea el contenido de la tercera línea como una estructura de datos JSON.
+# 2. Parsea el contenido de la tercera línea como una estructura de datos JSON,
+#    limpiando cualquier carácter basura (como el BOM) antes del parseo.
 # 3. Modifica los textos en inglés directamente en la estructura de datos.
 # 4. Convierte la estructura de datos de nuevo a un string JSON, que ya
 #    estará perfectamente escapado.
@@ -33,6 +34,7 @@ import json
 import csv
 import re
 from collections import defaultdict
+import codecs
 
 # --- CONFIGURACIÓN ---
 TEXTS_DIR = "textos"
@@ -102,19 +104,26 @@ def inject_translations_json():
             continue
 
         json_string_escaped = script_match.group(2)
-        json_string_with_garbage = json_string_escaped.replace('\\"', '"')
 
-        first_brace_pos = json_string_with_garbage.find('{')
-        if first_brace_pos == -1:
-            print(f"  [ERROR] No se encontró un JSON de inicio ('{{') en la tercera línea de '{file_path}'.")
+        # --- FIX DEFINITIVO: Aislar y desescapar completamente ---
+        # 1. Aislar el bloque JSON para evitar basura al inicio o final
+        first_brace_pos = json_string_escaped.find('{')
+        last_brace_pos = json_string_escaped.rfind('}')
+        if first_brace_pos == -1 or last_brace_pos == -1:
+            print(f"  [ERROR] No se encontró un bloque JSON ('{{...}}') en la tercera línea de '{file_path}'.")
             continue
+        json_string_isolated = json_string_escaped[first_brace_pos : last_brace_pos + 1]
 
-        # Aislar el bloque JSON buscando el primer y último corchete
-        last_brace_pos = json_string_with_garbage.rfind('}')
-        json_string = json_string_with_garbage[first_brace_pos : last_brace_pos + 1]
+        # 2. Desescapar el bloque aislado de forma robusta
+        try:
+            clean_json_string = codecs.decode(json_string_isolated, 'unicode_escape')
+        except Exception as e:
+            print(f"  [ERROR] Falló el desescapado del bloque JSON en '{file_path}'. Error: {e}")
+            continue
+        # --- FIN DEL FIX ---
 
         try:
-            data = json.loads(json_string)
+            data = json.loads(clean_json_string)
         except json.JSONDecodeError as e:
             print(f"  [ERROR] La tercera línea de '{file_path}' no contiene un JSON válido. Error: {e}")
             continue
