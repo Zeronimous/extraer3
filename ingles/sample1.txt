@@ -1,6 +1,0 @@
-0 TextAsset Base  1 string m_Name = "achievements_des"
- 1 string m_Script = "﻿{\"Data\":[
-{\"ID\":\"achievements_des_1\",\"Chinese\":\"“呵呵~敬酒不吃的蠢货…”\",\"English\":\"\\\"Hehe, you'll regret your foolishness...\\\"\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
-{\"ID\":\"achievements_des_2\",\"Chinese\":\"\",\"English\":\"A simple line without special chars.\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
-{\"ID\":\"achievements_des_3\",\"Chinese\":\"\",\"English\":\"A line with a\\nnewline character.\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"}
-]}"

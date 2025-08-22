@@ -1,7 +1,0 @@
-﻿0 TextAsset Base  1 string m_Name = "achievements_des"
- 1 string m_Script = "ï»¿{\"Data\":[
-{\"ID\":\"achievements_des_1\",\"Chinese\":\"âåµåµ~æ¬éä¸åçè ¢è´§â¦â\",\"English\":\"\"(ES) Hehe, you'll regret your foolishness...\"\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
-{\"ID\":\"achievements_des_2\",\"Chinese\":\"\",\"English\":\"(ES) A simple line without special chars.\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"},
-{\"ID\":\"achievements_des_3\",\"Chinese\":\"\",\"English\":\"(ES) A line with a
-newline character.\",\"Japanese\":\"\",\"TraditionalChinese\":\"\"}
-]}"
